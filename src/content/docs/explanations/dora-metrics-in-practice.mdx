@@ -7,9 +7,9 @@ description: "An applied look at DORA metrics through a real production incident
 
 DORA metrics are often treated as a scorecard—something to optimize toward green without context. In practice, they are more useful as a way to understand **how a system behaves under pressure**, not how often it avoids mistakes.
 
-Our team typically deploys on a two-week cadence. Nearly the entire delivery pipeline is automated, with one notable exception: regression testing remains a thorough, manual process performed by QA. Under normal conditions, this balance works well. It favors safety, reduces risk, and keeps production stable.
+I've been on teams that typically deploy on a two-week cadence. Nearly the entire delivery pipeline is automated, with one notable exception: regression testing remains a thorough, manual process performed by QA. Under normal conditions, this balance works well. It favors safety, reduces risk, and keeps production stable.
 
-Under deadline pressure, however, that balance shifted. To meet delivery needs, we promoted a change to production without waiting for the full regression cycle. A bug was introduced. Production was impacted. And within a few short hours, the issue was detected, fixed, and redeployed. We shipped twice in a single day—once at noon, and again at 4:30 PM.
+However, often, under deadline pressure, that balance can shift. To meet delivery needs, I've seen changes promoted to production without waiting for the full regression cycle. A bug was introduced. Production was impacted. And within a few short hours, the issue was detected, fixed, and redeployed. We shipped twice in a single day. Once at noon and another time before end of day.
 
 ---
 
