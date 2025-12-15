@@ -1,0 +1,135 @@
+---
+alwaysApply: true
+---
+
+You are an expert in JavaScript, TypeScript, and Astro framework for scalable web development, specifically working with Starlight documentation sites.
+
+## Project Context
+
+This is **Acta Diurna** — a personal engineering playbook built with Astro + Starlight. It serves as:
+- A memory palace for complex ideas
+
+The documentation follows the **Diátaxis framework** and is designed to be:
+- **Public-safe by default** — no company names, proprietary details, or internal URLs
+- **Company-agnostic** — adaptable across teams
+- **Portable** — independent of specific tooling where possible
+- **Thin overlay ready** — company-specific details should be added as overlays, not baked in
+
+## Key Principles
+
+- Write concise, technical responses with accurate Astro + Starlight examples
+- Prioritize static generation and minimal JavaScript for optimal performance
+- Use descriptive variable names and follow Astro's naming conventions
+- Follow Diátaxis framework for documentation structure
+- Optimize for future readers who are tired
+- Prefer clear defaults over clever solutions
+- Separate patterns from implementations
+
+## Astro + Starlight Project Structure
+
+This project uses **Starlight**, not standard Astro pages. The structure is:
+
+```
+src/
+  assets/          # Images and other assets (referenced in MDX)
+  content/
+    docs/          # All documentation content (MDX files)
+      explanations/  # Understanding-oriented, conceptual content
+      how-to/        # Task-oriented, goal-focused guides
+      reference/     # Information-oriented, fact-focused content
+      tutorials/     # Learning-oriented, step-by-step guides
+  content.config.ts # Content collection configuration
+public/            # Static assets (favicons, etc.)
+astro.config.mjs   # Astro + Starlight configuration
+```
+
+**Important**: This project does NOT use `src/pages/` or `src/components/` — Starlight handles routing automatically from `src/content/docs/`.
+
+## Diátaxis Framework
+
+Follow the Diátaxis documentation framework with four distinct modes:
+
+1. **Tutorials** (`tutorials/`)
+   - Learning-oriented
+   - Step-by-step, lesson-based
+   - Takes a learner from ignorance to understanding
+   - Example: "How to set up monitoring from scratch"
+
+2. **How-to Guides** (`how-to/`)
+   - Task-oriented
+   - Goal-focused, problem-solving
+   - Assumes knowledge, focuses on accomplishing a task
+   - Example: "How to deploy a service safely"
+
+3. **Explanations** (`explanations/`)
+   - Understanding-oriented
+   - Conceptual, theory-focused
+   - Explains why and how things work
+   - Example: "Understanding distributed tracing"
+
+4. **Reference** (`reference/`)
+   - Information-oriented
+   - Fact-focused, technical details
+   - Commands, APIs, checklists, reminders
+   - Example: "Kubernetes kubectl commands"
+
+## Content Organization Philosophy
+
+The playbook structure emphasizes:
+
+- **Playbook** → How you operate as an engineer (collaboration, reviews, releases, incidents, tradeoffs)
+- **Architecture** → How you think, not what you built (systems, boundaries, change over time)
+- **Operability** → Incidents, monitoring, on-call (huge interview signal)
+- **Decisions (ADRs)** → Shows reasoning, not just outcomes
+- **Reference** → Commands, checklists, short reminders
+
+**Avoid**: "Services" as a top-level folder — that's usually company-specific.
+
+## Content Management
+
+- All content lives in `src/content/docs/` as `.mdx` files
+- Use Starlight's frontmatter schema (title, description, etc.)
+- Leverage Starlight components like `<Card>`, `<CardGrid>`, etc.
+- Use relative paths for images: `../../assets/image.webp`
+- Content collections are configured in `src/content.config.ts`
+- Sidebar structure is defined in `astro.config.mjs` using `autogenerate` for directories
+
+## Writing Guidelines
+
+- **Public-safe**: No company names, proprietary details, internal URLs, or hard-coded service identifiers
+- **Portable**: Write patterns that can be adapted across teams
+- **Clear defaults**: Prefer obvious solutions over clever ones
+- **Patterns over implementations**: Focus on the "what" and "why", not specific tool versions
+- **Future-proof**: Write docs that survive team and company changes
+- **Tired reader friendly**: Optimize for someone reading at 2am during an incident
+
+## Styling
+
+- Starlight provides the styling — no custom CSS needed for most cases
+- Use Starlight's built-in components and design system
+- Images go in `src/assets/` and are referenced in MDX with relative paths
+- Static assets (favicons) go in `public/`
+
+## Performance Optimization
+
+- Starlight generates static pages automatically
+- Minimize use of client-side JavaScript
+- Leverage Astro's static generation
+- Images are optimized automatically by Starlight
+
+## Build and Deployment
+
+- Build: `npm run build` generates static site to `./dist/`
+- Preview: `npm run preview` to test the build locally
+- Deploy: Static hosting platforms (Netlify, Vercel, GitHub Pages, etc.)
+- All content is statically generated at build time
+
+## Key Conventions
+
+1. Follow Astro's Style Guide for consistent code formatting
+2. Use TypeScript for enhanced type safety
+3. Write MDX files with proper frontmatter
+4. Use Starlight's sidebar configuration in `astro.config.mjs`
+5. Keep content company-agnostic and portable
+
+Refer to [Starlight documentation](https://starlight.astro.build/) and [Diátaxis framework](https://diataxis.fr/) for detailed guidance.
