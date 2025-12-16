@@ -13,7 +13,7 @@ Our team typically deploys on a two-week cadence. That cadence works well under 
 
 However, that balance changes when lead time expectations collapse from days to minutes — as they do during production incidents or urgent customer-impacting defects.
 
-Recently, we shipped twice in a single day: once earlier than usual to meet delivery deadlines and begin UAT, which—due to external constraints—occurs in production. In doing so, we proceeded without a full manual regression pass and introduced a defect into PROD.
+Recently, we shipped twice in a single day: once earlier than usual to meet delivery deadlines and begin UAT (which due to external constraints—occurs in production). In doing so, we skipped a full manual regression pass and introduced a defect into PROD.
 
 That defect required an emergency fix later the same day. Given timing and time-zone constraints, running a complete manual regression cycle was not feasible. The fix was deployed quickly, again without full regression coverage.
 
@@ -32,7 +32,7 @@ When deployments occur every two weeks, manual regression provides strong confid
 Without automation, the system forces one of two outcomes:
 
 1. Reduce the amount of work delivered per sprint to preserve QA capacity  
-2. Bypass regression testing to meet urgent delivery needs  
+2. Bypass regression testing to meet urgent delivery needs
 
 Neither option reflects a failure of QA or engineering discipline. They are predictable consequences of a system operating beyond its designed capacity.
 
