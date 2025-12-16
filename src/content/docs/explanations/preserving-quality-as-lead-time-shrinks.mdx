@@ -7,17 +7,15 @@ lastModified: 2025-01-15
 
 ## Introduction
 
-Metrics such as deployment frequency, lead time for changes, change failure rate, and mean time to restore are often misunderstood as a mandate to move faster at the expense of safety. In practice, they are more useful as a way to understand where a delivery system stops scaling.
+Metrics such as deployment frequency, lead time for changes, change failure rate, and mean time to restore are useful as a way to understand where a delivery system stops scaling.
 
 Our team typically deploys on a two-week cadence. That cadence works well under normal conditions and aligns with a manual regression testing process performed by QA. Quality is high, production is stable, and risk is managed deliberately.
 
-However, that balance changes when lead time expectations collapse from days to minutes — as they do during production incidents or urgent customer-impacting defects.
+However, that balance changes when lead time expectations collapse from days to minutes - like tickets at the end of the sprint or urgent impacting customer defects.
 
-Recently, we shipped twice in a single day: once earlier than usual to meet delivery deadlines and begin UAT (which due to external constraints—occurs in production). In doing so, we skipped a full manual regression pass and introduced a defect into PROD.
+Recently, we shipped twice in a single day: once earlier in the sprint than usual to meet delivery deadlines. In doing so, we skipped a full manual regression pass and introduced a defect into PROD.
 
 That defect required an emergency fix later the same day. Given timing and time-zone constraints, running a complete manual regression cycle was not feasible. The fix was deployed quickly, again without full regression coverage.
-
-The system held — but not because it was designed to operate safely at that speed. It held because people adapted to constraints in the moment. That adaptability is valuable, but it is not a sustainable strategy for maintaining quality as lead time expectations shrink.
 
 That moment exposed a constraint that delivery metrics make visible: **manual regression testing does not scale with reduced lead time**, even when quality expectations remain unchanged.
 
