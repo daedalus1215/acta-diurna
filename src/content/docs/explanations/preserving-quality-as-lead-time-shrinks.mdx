@@ -1,29 +1,29 @@
 ---
 title: "Preserving Quality as Lead Time Shrinks"
 description: "An applied look at delivery metrics through a real production incident, exploring the tradeoffs between deployment frequency, lead time, change failure rate, and mean time to restore."
-published: N/A
-lastModified: 2025-01-15
+published: 2025-01-17
+lastModified: 2025-01-17
 ---
 
 ## Introduction
 
-Metrics such as deployment frequency, lead time for changes, change failure rate, and mean time to restore are useful as a way to understand where a delivery system stops scaling.
+DORA metrics help reveal the point at which a team stops scaling effectively.
 
-Our team typically deploys on a two-week cadence. That cadence works well under normal conditions and aligns with a manual regression testing process performed by QA. Quality is high, production is stable, and risk is managed deliberately.
+Our team typically deploys on a two-week cadence using standard Jira columns. Tickets progress through the statuses, with manual regression testing serving as the final check before the release is packaged. Quality remains high, production stays stable, and risk is managed deliberately.
 
-However, that balance changes when lead time expectations collapse from days to minutes - like tickets at the end of the sprint or urgent impacting customer defects.
+However, this balance shifts during crunch periods, when lead time expectations collapse from days to minutes—for example, with tickets rushed at the end of a sprint or urgent, customer-impacting defects.
 
-Recently, we shipped twice in a single day: once earlier in the sprint than usual to meet delivery deadlines. In doing so, we skipped a full manual regression pass and introduced a defect into PROD.
+Recently, we shipped twice in a single day: once earlier in the sprint than usual to meet delivery deadlines. In doing so, we skipped a full manual regression pass and introduced a defect into production.
 
 That defect required an emergency fix later the same day. Given timing and time-zone constraints, running a complete manual regression cycle was not feasible. The fix was deployed quickly, again without full regression coverage.
 
-That moment exposed a constraint that delivery metrics make visible: **manual regression testing does not scale with reduced lead time**, even when quality expectations remain unchanged.
+That experience exposed a key constraint that delivery metrics make visible: manual regression testing does not scale with reduced lead time, even when quality expectations remain unchanged.
 
 ---
 
 ## The Regression Testing Constraint
 
-Manual regression testing is not a quality problem. It is a throughput constraint.
+Manual regression testing is not a quality problem—it is a throughput constraint.
 
 When deployments occur every two weeks, manual regression provides strong confidence and works well within sprint boundaries. But as lead time expectations shrink, the cost of waiting for a full regression pass increases disproportionately.
 
@@ -34,22 +34,21 @@ Without automation, the system forces one of two outcomes:
 
 Neither option reflects a failure of QA or engineering discipline. They are predictable consequences of a system operating beyond its designed capacity.
 
-Automated regression testing does not replace QA judgment. It preserves it — by removing repetitive verification work from the critical path and allowing human attention to focus on exploratory testing, risk analysis, and edge cases.
+Automated regression testing does not replace QA judgment. It preserves it—by removing repetitive verification work from the critical path and allowing human attention to focus on exploratory testing, risk analysis, and edge cases.
 
 ---
 
 ## Metrics as a System, Not a Scorecard
 
-These metrics describe a system of constraints:
-
+These metrics describe a system of constraints:Deployment Frequency is limited by how often confidence can be established  
 - **Deployment Frequency** is limited by how often confidence can be established  
-- **Lead Time** is bounded by the slowest required validation step  
-- **Change Failure Rate** reflects how much risk escapes that validation  
-- **Mean Time to Restore** determines whether that risk is survivable  
+- **Lead Time is bounded by the slowest required validation step  
+- **Change Failure Rate reflects how much risk escapes that validation  
+- **Mean Time to Restore determines whether that risk is survivable
 
 Manual regression testing improves confidence, but it also increases lead time and caps deployment frequency. Automation shifts confidence earlier in the pipeline, reducing reliance on last-minute manual gates.
 
-Without automation, improving one part of the system inevitably degrades another. With automation, those tensions soften — not because failures disappear, but because recovery becomes predictable and safe.
+Without automation, improving one metric inevitably degrades another. With automation, those tensions soften—not because failures disappear, but because recovery becomes predictable and safe.
 
 ---
 
@@ -57,6 +56,17 @@ Without automation, improving one part of the system inevitably degrades another
 
 This is not an argument for moving faster at the expense of quality, nor is it a critique of manual QA practices. It is an acknowledgment that our delivery system is being asked to operate at speeds it was not originally designed for.
 
-If we want to maintain quality while reducing lead time — especially during incidents — we must shift confidence earlier in the pipeline through automated regression testing.
+If we want to maintain quality while reducing lead time—especially during incidents—we must shift confidence earlier in the pipeline through automated regression testing.
 
 Metrics give us a shared language to discuss these tradeoffs without assigning blame. They help us see where the system bends, where it breaks, and where investment creates resilience rather than heroics.
+
+I acknowledge that building and integrating an effective automated regression framework is not a trivial effort—it requires upfront investment in test selection, pipeline integration, and ongoing maintenance. However, if we want to see meaningful improvement in our DORA metrics, this directly addresses the largest bottleneck currently constraining our deployment frequency and lead time.
+
+## References
+
+- Socly.io case study: A compliance startup used DORA metrics to measure team efficiency improvement.
+  [Read the full post](https://devdynamics.ai/blog/socly-elite-dora-status/)
+
+
+- DevOps Awards winner Decathlon Digital on “aligning to accelerate: MTTR decreased, from 5 days to less than 1 day. Lead time improved, from 15 days to less than 2 days.
+  [Read the full post](https://cloud.google.com/blog/products/devops-sre/devops-awards-2022-winner-decathlon-digital)
