@@ -1,0 +1,181 @@
+---
+
+title: "Trunk-Based Development and Elite Team Performance"
+description: "An explanation of why high-performing software teams converge on trunk-based development, and how branching strategy influences lead time, MTTR, and delivery risk."
+published: false
+lastModified: 2025-12-17
+------------------------
+
+## Executive summary
+
+High-performing software teams tend to converge on **trunk-based development (TBD)** not because it is fashionable or ideologically pure, but because it minimizes the structural forces that inflate **lead time**, **change failure rate**, and **mean time to restore (MTTR)**.
+
+This article explains *why* that convergence happens. It connects branching strategy to delivery performance, drawing on industry research (notably DORA/Accelerate), operational mechanics, and practical constraints observed in real teams.
+
+This is not a how-to guide, nor a mandate. It is an explanation of cause and effect.
+
+---
+
+## The question this article answers
+
+> *Why do elite-performing teams tend to use trunk-based development rather than long-lived branching models like GitFlow?*
+
+This is a different question from:
+
+* *What is trunk-based development?*
+* *Which branching model is better?*
+
+Those questions are factual or prescriptive. This one is explanatory.
+
+---
+
+## Branching strategy as a system design choice
+
+Branching strategy is often treated as a workflow preference. In practice, it is a **system design decision** that shapes:
+
+* How long changes remain invisible to the rest of the system
+* How frequently integration happens
+* How quickly defects can be detected and reversed
+* How confidently teams can deploy under pressure
+
+Long-lived branches and trunk-based development optimize for **different failure modes**.
+
+---
+
+## What trunk-based development optimizes for
+
+At its core, trunk-based development optimizes for:
+
+* **Continuous integration**: changes integrate into a shared trunk at least daily
+* **Short-lived divergence**: feature work is isolated briefly (hours or days, not weeks)
+* **Fast feedback loops**: integration failures surface early
+* **Low-cost rollback**: small changes are easier to revert or forward-fix
+
+These properties directly influence delivery metrics.
+
+:::note Perceived safety vs operational safety
+**Perceived safety** comes from isolation: long-lived branches, extended stabilization phases, and delayed exposure to risk.
+
+**Operational safety** comes from fast feedback: small changes, early integration, and the ability to recover quickly when something goes wrong.
+
+Trunk-based development prioritizes operational safety. Long-lived branching models often optimize for perceived safety, which can break down under incident pressure.
+:::
+
+---
+
+## Delivery performance and DORA metrics
+
+The DORA metrics provide a useful lens for evaluating branching strategies:
+
+* **Lead Time for Changes**
+* **Deployment Frequency**
+* **Change Failure Rate**
+* **Mean Time to Restore (MTTR)**
+
+DORA research consistently shows that high-performing teams achieve *both* speed and stability. The mechanisms that enable this are not accidental.
+
+Branching strategy is one of those mechanisms.
+
+---
+
+## Evidence from research
+
+Multiple years of DORA / Accelerate research show a strong correlation between **continuous integration practices** and elite delivery performance. Teams that integrate code frequently, keep batch sizes small, and avoid long-lived divergence consistently outperform peers on lead time and MTTR while maintaining low change failure rates.
+
+Trunk-based development is not called out as a mandate in these reports. Instead, it appears implicitly through the practices associated with high performers: short-lived branches, frequent merges to mainline, and rapid validation. Over time, teams optimizing for these outcomes tend to converge on trunk-based development because it structurally reinforces those behaviors.
+
+---
+
+## Lead time: where long-lived branches accumulate cost
+
+Long-lived branches defer integration. Deferred integration creates:
+
+* Larger merge surfaces
+* Higher cognitive load during reconciliation
+* Increased probability of conflicts
+* Delayed discovery of incompatible changes
+
+Each of these extends the time from **code complete** to **code running safely in production**.
+
+Trunk-based development reduces lead time by reducing the maximum distance between development and integration.
+
+---
+
+## MTTR: restoring service under pressure
+
+During an incident, teams need to answer one question quickly:
+
+> *What changed?*
+
+Trunk-based development makes this easier by:
+
+* Keeping changes small
+* Ensuring changes are already integrated
+* Allowing rapid revert or forward-fix
+
+Long-lived branches often require additional coordination, cherry-picks, or emergency merges—precisely when time and clarity are scarce.
+
+---
+
+## Why GitFlow feels safer (and when it is)
+
+GitFlow optimizes for a different context:
+
+* Infrequent releases
+* Heavy manual testing phases
+* Clear separation between development and release stabilization
+
+In environments where deployments are rare and regression testing is slow or manual, GitFlow can reduce perceived risk.
+
+The tradeoff is **structural latency**.
+
+As delivery expectations shift from weeks to hours or minutes, that latency becomes a liability.
+
+---
+
+## Elite performance and constraint removal
+
+Elite teams are not simply "faster." They have systematically removed constraints that slow learning and recovery.
+
+Trunk-based development removes one such constraint: delayed integration.
+
+This is why it appears repeatedly—not as a mandate, but as an emergent property of teams optimizing for fast, safe delivery at scale.
+
+---
+
+## What this does *not* claim
+
+This article does **not** claim that:
+
+* Trunk-based development is universally correct
+* GitFlow is "bad" or irresponsible
+* Branching strategy alone determines performance
+
+Delivery performance is multi-dimensional. Branching strategy is one lever among many.
+
+---
+
+## When to treat this as guidance, not dogma
+
+Use this explanation when:
+
+* Lead time expectations are shrinking
+* Incidents require rapid restoration
+* Deployment frequency is increasing
+* Manual regression testing becomes a bottleneck
+
+Treat it cautiously when:
+
+* Releases are infrequent by necessity
+* Regulatory or operational constraints dominate
+* Teams lack automated testing and deployment safety nets
+
+---
+
+## References and further reading
+
+* *Accelerate: The Science of Lean Software and DevOps* — Forsgren, Humble, Kim
+* DORA State of DevOps Reports
+* Trunk-Based Development (trunkbaseddevelopment.com)
+
+(These are starting points; this article synthesizes rather than reproduces them.)
