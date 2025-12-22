@@ -1,0 +1,289 @@
+---
+title: "Patterns as Guardrails: Architecture That Resists Entropy"
+description: "A practical pattern system for keeping large codebases understandable: dependency direction, blackbox boundaries, and domain-centric organization."
+published: 2025-12-21
+lastModified: 2025-12-21
+---
+
+import PatternGrouping from './pattern-grouping.png';
+import { Image } from 'astro:assets';
+
+Software systems rarely fail because a team chose the “wrong” framework.  
+They fail because **complexity compounds faster than intent**.
+
+At small scale, discipline is optional.  
+At medium scale, discipline is cultural.  
+At large scale, discipline must be **architectural**.
+
+This article describes the pattern system and dependency rules I use to keep a growing codebase understandable, testable, and resistant to entropy — even as domains expand and teams scale.
+
+> This is not “DDD for DDD’s sake.”  
+> This is DDD as a survival mechanism.
+
+<Image
+  src={PatternGrouping}
+  alt="Domain pattern dependency hierarchy showing application, domain, and infrastructure layers"
+/>
+
+*Figure: Stratified domain patterns with enforced dependency direction.*
+
+---
+
+## The problem: unbounded optionality
+
+Most systems don’t collapse suddenly. They degrade.
+
+- Transaction logic leaks into controllers
+- Repositories grow “helpful” business rules
+- Services call services which call services
+- Refactors stall because no one knows what depends on what
+
+The root cause usually isn’t incompetence — it’s **lack of constraint**.
+
+When everything can talk to everything, architecture becomes a negotiation, not a structure.
+
+So the goal isn’t maximum flexibility.  
+The goal is **directed flexibility**.
+
+---
+
+## The core idea: patterns define a dependency graph
+
+This architecture is built on a simple rule:
+
+**Every pattern exists at a specific level of abstraction — and dependencies may only flow downward.**
+
+Patterns don’t just describe what code does.  
+They define where orchestration is allowed to happen.
+
+That’s the difference between guidelines and guardrails.
+
+---
+
+## The high-level shape
+
+At a distance, the system resolves into three major layers:
+
+- **Application**: request/response handling, entry points, integration boundaries
+- **Domain**: business behavior, transactions, rules, domain workflows
+- **Infrastructure**: persistence, external IO, messaging, remote calls
+
+The important part isn’t that those layers exist — it’s that **the Domain is stratified into explicit roles** instead of a single amorphous “service layer.”
+
+---
+
+## The domain is not a blob
+
+Instead of “a service that does stuff,” the domain is split into explicit patterns:
+
+1. **Domain Services**
+2. **Aggregators**
+3. **Transaction Scripts**
+4. **Mappers**
+5. **Assemblers**
+6. **Converters**
+7. **Repositories**
+
+Each layer answers a different question.
+
+---
+
+## Domain Services: orchestration, not work
+
+**Domain Services** exist to answer business-level questions:
+
+- “Can this invoice be cancelled?”
+- “What happens when a payment is applied?”
+- “Which workflows must execute together?”
+
+They coordinate transaction scripts and aggregators.
+
+They do **not** implement low-level behavior themselves.
+
+> If a Domain Service is full of conditional logic, something is probably misplaced.
+
+Their job is sequencing and delegation — not calculation.
+
+---
+
+## Aggregators: cross-domain boundaries with teeth
+
+Aggregators are the primary mechanism for cross-domain communication.
+
+They exist to:
+
+- hide foreign models and infrastructure details
+- stabilize cross-domain contracts
+- prevent entity “pollution”
+- keep domains from becoming mutually dependent piles
+
+Aggregators are diplomats — not citizens.
+
+---
+
+## Transaction Scripts: where business rules live
+
+Transaction Scripts are the atomic units of business behavior.
+
+Each one:
+
+- handles a single use case
+- owns its input validation and rules
+- is independently testable
+- reads like a direct story of “what happens”
+
+If you want to understand how the system behaves, you read the Transaction Scripts.
+
+They are intentionally explicit and procedural.
+
+**Boring is a feature.**
+
+---
+
+## Mappers, Assemblers, Converters: controlled complexity
+
+These patterns exist to prevent accidental orchestration.
+
+### Converters
+
+Converters are pure transformations:
+
+- no dependencies
+- no IO
+- no business logic
+- no decisions
+
+If it needs data access, it is not a converter.
+
+---
+
+### Assemblers
+
+Assemblers do data composition:
+
+- may touch repositories
+- may combine multiple data sources
+- still no business rules
+
+Assemblers answer: **“What shape should this object be?”**
+
+---
+
+### Mappers
+
+Mappers coordinate assembly:
+
+- orchestrate assemblers and converters
+- produce complex structures
+- keep Transaction Scripts focused
+
+Mappers exist so Transaction Scripts don’t grow tentacles.
+
+---
+
+## The Blackbox Principle
+
+One rule keeps the entire structure sane:
+
+**If a pattern uses another pattern internally, it becomes a blackbox to higher layers.**
+
+If a Mapper uses a Converter, then a Transaction Script must use the Mapper — not the Converter.
+
+You never reach *through* a layer.  
+You only talk *to* it.
+
+This prevents dependency leakage and preserves abstraction boundaries.
+
+---
+
+## Repositories: data, nothing else
+
+Repositories are intentionally boring.
+
+They:
+
+- query
+- persist
+- return entities or projections
+
+They do **not**:
+
+- enforce business rules
+- orchestrate workflows
+- publish events
+- call services
+
+When repositories stay dumb, refactors stay possible.
+
+---
+
+## Application layer: entry points, not logic
+
+Actions, listeners, webhooks, and responders exist to:
+
+- validate input
+- call into the domain
+- shape output
+
+They are translators — not decision makers.
+
+Swagger belongs here.  
+Business rules do not.
+
+---
+
+## Why this works at scale
+
+This system optimizes for:
+
+- **Local reasoning** — you know where logic belongs
+- **Refactor safety** — dependency direction is fixed
+- **Test isolation** — Transaction Scripts test cleanly
+- **Team scaling** — patterns teach newcomers how to think
+- **Change containment** — things that change together live together
+
+Most importantly:
+
+**It prevents cleverness from becoming architecture.**
+
+---
+
+## This is not dogma
+
+You will violate these rules sometimes.
+
+That’s fine.
+
+What matters is that violations are:
+
+- visible
+- intentional
+- discussable
+
+Architecture isn’t here to eliminate tradeoffs.  
+It exists to make tradeoffs explicit.
+
+---
+
+## Closing thought
+
+Good architecture doesn’t make systems faster.
+
+It makes **bad decisions harder to hide**.
+
+Patterns aren’t about purity.  
+They’re about protecting future engineers from present convenience.
+
+Entropy never sleeps.
+
+---
+
+## Related
+
+- **Reference → Pattern Glossary**
+  - Transaction Scripts
+  - Domain Services
+  - Aggregators
+  - Repositories
+- **Reference → Dependency Injection Rules**
+- **How-to → Add a Transaction Script**
