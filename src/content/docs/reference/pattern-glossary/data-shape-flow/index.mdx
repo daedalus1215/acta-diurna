@@ -1,0 +1,161 @@
+---
+title: "Data Shape Flow: DTO → Command → Param → Entity"
+description: "How data changes shape across layers without creating shared-type dumping grounds: DTOs in application, commands at services, params owned by transaction scripts."
+published: 2025-12-23
+lastModified: 2025-12-23
+---
+
+import ClassDiagramDTOCommandParamEntity from '../images/class-diagram-dto-command-param-entity.png';
+import DTOCommandParamEntityFlow from '../images/type-flow.png';
+import PatternGrouping from '../images/pattern-grouping.png';
+import { Image } from 'astro:assets';
+
+
+This page documents how request data flows through the architecture while keeping **type ownership local** and dependencies pointed inward.
+
+
+## Goal
+
+We want:
+
+- **No shared type dumping grounds (as much as possible)** (e.g., `types.ts`, `constants.ts`, `common/`)
+- **Type ownership near the consumer**
+- Lower-level components depending on *their* local types (not global ones)
+- Each layer insulated from the naming + churn of its neighbors
+
+In TypeScript, structural typing (“duck typing”) makes this viable: different named types with the same shape can be passed through safely without creating hard coupling.
+
+---
+
+
+<Image
+  src={PatternGrouping}
+  alt="Domain pattern dependency hierarchy showing application, domain, and infrastructure layers"
+/>
+
+*Figure: Stratified domain patterns with enforced dependency direction.*
+
+
+<Image
+  src={ClassDiagramDTOCommandParamEntity}
+  alt="Diagram showing the flow of data, as a request. Going through the different classes, within the different hexagonal folders/layers."
+/>
+
+*Diagram 1 (layered directories + dependencies)*
+
+
+<Image
+  src={DTOCommandParamEntityFlow}
+  alt="Diagram showing the flow of data, as a request. How it's shape doesn't change much, but it is called something different, depending on the layer it is in."
+/>
+
+*Diagram 2 (type-shape flow DTO → Command → Param → Entity)*
+
+:::note
+**How to read this diagram**
+
+- DTOs are defined in the Application layer next to Actions
+- Commands are defined next to Domain Services
+- Params are owned by Transaction Scripts
+- Infrastructure returns Entities or Projections, never DTOs
+:::
+
+---
+
+## The flow
+
+### 1) Application DTO (owned by the Action)
+
+**Front-end sends a DTO** shaped for API validation and docs.
+
+- Lives next to the Action that consumes it
+- Used for request validation, swagger, transport concerns
+- Not referenced by the domain layer
+- Used for responses
+
+**Location**
+- `application/controllers/actions/{action}/...dto.ts`
+
+---
+
+### 2) Domain Service Command (owned by the Service)
+
+The Action calls the domain service, but the service **does not depend on the DTO**.
+
+Instead, the service defines a *Command* type (same shape as the DTO, usually) and consumes that.
+
+This keeps the domain service free of transport coupling and allows the service to evolve without dragging the action layer with it.
+
+**Location**
+- `domain/services/{service}/...command.ts` (or colocated inside the service directory)
+
+---
+
+### 3) Transaction Script Param (owned by the Transaction Script)
+
+When the service delegates to a Transaction Script, the Transaction Script **does not depend on the Command or DTO**.
+
+Instead, the Transaction Script defines a *Param* type that it owns and depends on.
+
+This is a key rule:
+
+> **The Transaction Script owns its input type.**
+
+If the service needs to slightly transform data before delegation, it can do so while still matching the Param shape.
+
+**Location**
+- `domain/transaction-scripts/{ts}/...param.ts`
+
+---
+
+### 4) Lower patterns depend on the Param (not on DTO/Command)
+
+Anything inside the Transaction Script folder (converter, mapper, assembler, projection types, etc.) should depend on the Transaction Script’s **Param**, if they need a shared type at all.
+
+They should not depend on:
+
+- DTOs (application layer)
+- Commands (service layer)
+
+This prevents a situation where every low-level component imports one shared global type, which quickly becomes a coupling hotspot.
+
+**Rule of thumb**
+- “If it lives under a Transaction Script, it speaks Param.”
+
+---
+
+### 5) Entity (owned by the Domain)
+
+Entities represent the domain model and persistence mapping.
+
+They do not depend on DTOs/Commands/Params.
+
+The conversion into entities happens via converters/assemblers/mappers that live *next to the Transaction Script*, not in a global utility layer.
+
+---
+
+## Why this works
+
+This approach:
+
+- stops “shared-types.ts” from becoming a junk drawer
+- localizes change (types change where the behavior changes)
+- reduces cross-layer import churn
+- makes ownership obvious
+- keeps domain code from drifting toward transport concerns
+
+## Tradeoffs
+
+- You will have multiple types with identical shapes (DTO, Command, Param)
+- That’s intentional — duplication here is a **boundary**, not waste
+- When shapes truly diverge (validation vs business rules), the divergence becomes explicit instead of hidden
+
+---
+
+## Summary rules
+
+- DTOs live in the Action directory and stay in the application layer.
+- Services accept Commands that they own (not DTOs).
+- Transaction Scripts accept Params that they own (not Commands/DTOs).
+- Converters/Assemblers/Mappers inside a Transaction Script folder should depend on Params (if anything).
+- Avoid global dumping grounds; colocate types with the behavior they serve.
