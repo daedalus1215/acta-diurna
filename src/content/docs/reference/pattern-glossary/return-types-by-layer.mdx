@@ -1,0 +1,65 @@
+---
+title: "Return Types by Layer: Entities In, DTOs Out"
+description: "Rules for what each architectural layer is allowed to return, and where DTO transformation is permitted."
+published: 2025-12-23
+lastModified: 2025-12-23
+---
+
+## Core rule
+
+- **The domain and infrastructure layers return domain objects**:  
+  **Entities or Projections** — never application DTOs.
+- **DTO shaping/massaging happens only in the Application layer**.
+- Specifically, transformation into response DTOs happens inside a **Responder** that lives **with the Action** that owns the request.
+
+---
+
+## What each layer returns
+
+| Layer | Allowed to Return | Forbidden to Return |
+|---|---|---|
+| **Application** | Response DTOs, API results | Domain entities directly, raw DB results |
+| **Domain** | Entities, value objects, domain results, command output shapes | DTOs, controller-bound types, transport shapes |
+| **Infrastructure** | Entities, query projections, persistence models | DTOs, request/response types, view models |
+
+---
+
+## Where DTO transformation lives
+
+- `ActionResponder` objects exist to translate **domain → response DTO**
+- These responders are:
+  - Transport-aware
+  - Swagger-attached
+  - Allowed to evolve without domain impact
+  - **Colocated with the action**, not shared
+
+---
+
+## Why this matters
+
+This keeps:
+
+- domain code **framework-agnostic**
+- repositories **pure data access**
+- transaction scripts **type owners of their inputs**
+- responders **owners of DTO output concerns**
+
+It also prevents:
+
+- circular dependencies
+- global `types.ts` junk drawers
+- accidental coupling to transport models
+
+---
+
+## Exception guidance
+
+- If a query shape is specialized for a use case → return a **Projection**
+- If a response shape is for API/UI → return a **DTO from the responder**
+- If a domain object shape changes → the DTO changes, but only at the boundary that consumes it
+
+---
+
+## Summary
+
+> **Entities and projections flow inward. DTOs only flow outward, and only from responders.**

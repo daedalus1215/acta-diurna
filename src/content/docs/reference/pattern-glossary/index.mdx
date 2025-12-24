@@ -1,0 +1,73 @@
+---
+title: "Pattern Glossary"
+description: "A reference index of architectural patterns, dependency direction rules, and type ownership boundaries."
+published: 2025-12-23
+lastModified: 2025-12-23
+---
+import ClassDiagramDTOCommandParamEntity from './images/class-diagram-dto-command-param-entity.png';
+import DTOCommandParamEntityFlow from './images/type-flow.png';
+import PatternGrouping from './images/pattern-grouping.png';
+import { Image } from 'astro:assets';
+
+
+This glossary defines the patterns used at each layer of the system and the dependency rules that govern them.
+
+## Patterns to Expect in the Application Layer
+
+- Actions (single-route controllers)
+- Responders (DTO shaping)
+- Listeners (event entry points)
+- Webhooks (external HTTP entry points)
+- API contracts and validation
+
+## Patterns to Expect in the Domain Layer
+
+- Domain Services (orchestration)
+- Aggregators (via ports)
+- Transaction Scripts (business rules + param owners)
+- Mappers (coordinate assembly)
+- Assemblers (compose data)
+- Converters (pure transforms)
+- Entities and value objects
+
+## Patterns to Expect in the Infrastructure Layer
+
+- Repositories (return entities or projections, never DTOs)
+- External IO adapters
+- Dispatchers (publish domain events)
+- Remote Callers (send commands to other systems)
+
+---
+
+## Overall Pattern Pallete 
+
+<Image
+  src={PatternGrouping}
+  alt="Domain pattern dependency hierarchy showing application, domain, and infrastructure layers"
+/>
+
+## Dependency Direction Principles
+
+<Image
+  src={ClassDiagramDTOCommandParamEntity}
+  alt="Diagram showing architectural pattern levels and allowed dependency direction"
+/>
+
+---
+
+## Type Ownership & Flow Boundaries
+
+<Image
+  src={DTOCommandParamEntityFlow}
+  alt="Diagram showing type flow from DTO to Command to Param to Entity"
+/>
+
+---
+
+## Design Goals
+
+- Keep type ownership local
+- Prevent shared-type dumping grounds
+- Ensure dependencies point inward
+- Make circular dependencies structurally impossible
+- Keep controllers SRP-compliant by refactoring methods into single-purpose Action classes
