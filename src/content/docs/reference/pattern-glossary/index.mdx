@@ -9,8 +9,15 @@ import DTOCommandParamEntityFlow from './images/type-flow.png';
 import PatternGrouping from './images/pattern-grouping.png';
 import { Image } from 'astro:assets';
 
+This glossary defines the patterns used at each layer of the system and the dependency rules that govern them. It largely adopts architectural and design patterns articulated by Martin Fowler, Robert C. Martin, Paul M. Jones, Larry Constantine, Alistar Cockburn, Eric Evans, Vlad Khononov, and many others. 
 
-This glossary defines the patterns used at each layer of the system and the dependency rules that govern them.
+One thing the reader may notice, there is a lot of granularity. That is intentional. It serves multiple roles and provides practical conveniences. Notably, these patterns afford adherence to the Single Responsibility Principle (SRP, part of SOLID) without creating an unmanageable number of files or classes or leaving uncertainty about their proper placement.
+
+## We follow Hexagonal architecture
+- Whether it is a modular monolith, a microservice, or a tiny processing service, we generally use hexagonal architecture as a baseline. 
+
+## We follow Domain Driven Design architecture Lite
+- We tend to follow DDD, especially in modular monolith applications. We want the modules to be modeled like domains, that can be pulled off as microservices if the need is presented. 
 
 ## Patterns to Expect in the Application Layer
 
